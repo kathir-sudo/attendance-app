@@ -1,7 +1,7 @@
 // public/script.js
 document.addEventListener('DOMContentLoaded', () => {
     // --- 1. CONFIGURATION & GLOBAL SETUP ---
-    const API_URL = '/api';
+    const API_URL = 'http://localhost:3000/api';
 
     // Page Detection: Determines which page is currently active.
     const isManageStudentsPage = document.getElementById('addStudentForm');
@@ -44,35 +44,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Renders a list of students to the DOM
-        function renderStudents(students) {
-            listDiv.innerHTML = `
-                <div class="data-list-item data-list-header">
-                    <span class="s-no">S.No</span>
-                    <div class="student-info">Roll No. & Name</div>
-                    <span></span>
-                    <span>Actions</span>
-                </div>`;
-            if (students.length === 0) {
-                listDiv.innerHTML += '<p style="text-align:center; padding: 1rem;">No students found.</p>';
-            }
-            students.forEach((student, index) => {
-                const item = document.createElement('div');
-                item.className = 'data-list-item';
-                item.innerHTML = `
-                    <span class="s-no">${index + 1}</span>
-                    <div class="student-info">
-                        <strong>${student.rollNumber}</strong><br>
-                        <span>${student.name}</span>
-                    </div>
-                    <span></span>
-                    <div class="button-group">
-                        <button class="btn-edit" data-id="${student._id}">Edit</button>
-                        <button class="btn-delete" data-id="${student._id}">Delete</button>
-                    </div>`;
-                listDiv.appendChild(item);
-            });
-            countSpan.textContent = `Total: ${students.length}`;
-        }
+// In public/script.js, inside if (isManageStudentsPage)
+
+function renderStudents(students) {
+    listDiv.innerHTML = `
+        <div class="data-list-item data-list-header">
+            <div class="student-info">Student</div>
+            <span>Actions</span>
+        </div>`;
+
+    if (students.length === 0) {
+        listDiv.innerHTML += '<p style="text-align:center; padding: 1rem;">No students found.</p>';
+    }
+    
+    // UPDATED: Buttons now use symbols (✎ for pencil,  for trash)
+    students.forEach((student) => {
+        const item = document.createElement('div');
+        item.className = 'data-list-item';
+        item.innerHTML = `
+            <div class="student-info">
+                <strong>${student.rollNumber}</strong>
+                <span>${student.name}</span>
+            </div>
+            <div class="button-group">
+                <button class="btn-edit" data-id="${student._id}" title="Edit Student">✎</button>
+                <button class="btn-delete" data-id="${student._id}" title="Delete Student"></button>
+            </div>`;
+        listDiv.appendChild(item);
+    });
+    
+    countSpan.textContent = `Total: ${students.length}`;
+}
 
         // Event Listener: Add a single student
         form.addEventListener('submit', async (e) => {
@@ -225,35 +227,40 @@ document.addEventListener('DOMContentLoaded', () => {
         const yyyy = today.getFullYear();
         groupNameInput.value = `${dd}-${mm}-${yyyy}`;
 
-        async function fetchStudentsForAttendance() {
-            try {
-                const response = await fetch(`${API_URL}/students`);
-                const students = await response.json();
-                studentListDiv.innerHTML = '';
-                if (students.length === 0) {
-                    studentListDiv.innerHTML = '<p>No students found. Please add students first.</p>';
-                }
-                students.forEach((student) => {
-                    const item = document.createElement('div');
-                    item.className = 'data-list-item student-attendance-item';
-                    item.dataset.studentId = student._id;
-                    item.dataset.rollNumber = student.rollNumber;
-                    item.dataset.studentName = student.name;
-                    // Default status is now "Absent"
-                    item.innerHTML = `
-                        <div class="info">
-                           <strong>${student.rollNumber}</strong> - ${student.name}
-                        </div>
-                        <div class="status-buttons">
-                            <button type="button" class="status-toggle status-absent" data-status="Absent">Absent</button>
-                        </div>`;
-                    studentListDiv.appendChild(item);
-                });
-                countSpan.textContent = `Total: ${students.length}`;
-            } catch (err) {
-                studentListDiv.innerHTML = `<p class="message error">Failed to load students.</p>`;
-            }
+        // In public/script.js, inside if (isIndexPage)
+// In public/script.js, inside if (isIndexPage)
+
+async function fetchStudentsForAttendance() {
+    try {
+        const response = await fetch(`${API_URL}/students`);
+        const students = await response.json();
+        studentListDiv.innerHTML = '';
+        if (students.length === 0) {
+            studentListDiv.innerHTML = '<p>No students found. Please add students first.</p>';
         }
+        students.forEach((student) => {
+            const item = document.createElement('div');
+            item.className = 'data-list-item student-attendance-item';
+            item.dataset.studentId = student._id;
+            item.dataset.rollNumber = student.rollNumber;
+            item.dataset.studentName = student.name;
+            
+            // --- The order of these two divs has been swapped back ---
+            item.innerHTML = `
+                <div class="info">
+                   <strong>${student.rollNumber}</strong> - ${student.name}
+                </div>
+                <div class="status-buttons">
+                    <button type="button" class="status-toggle status-absent" data-status="Absent">Absent</button>
+                </div>
+            `;
+            studentListDiv.appendChild(item);
+        });
+        countSpan.textContent = `Total: ${students.length}`;
+    } catch (err) {
+        studentListDiv.innerHTML = `<p class="message error">Failed to load students.</p>`;
+    }
+}
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -291,34 +298,42 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        async function loadRecordForEdit() {
-            try {
-                const response = await fetch(`${API_URL}/attendance/${recordId}`);
-                const record = await response.json();
-                groupNameInput.value = record.groupName;
-                studentListDiv.innerHTML = '';
-                record.records.forEach((rec) => {
-                    const item = document.createElement('div');
-                    item.className = 'data-list-item student-attendance-item';
-                    item.dataset.studentId = rec.studentId;
-                    item.dataset.rollNumber = rec.rollNumber;
-                    item.dataset.studentName = rec.studentName;
-                    const isPresent = rec.status === 'Present';
-                    const statusClass = isPresent ? 'status-present' : 'status-absent';
-                    const statusText = isPresent ? 'Present' : 'Absent';
-                    item.innerHTML = `
-                        <div class="info">
-                           <strong>${rec.rollNumber}</strong> - ${rec.studentName}
-                        </div>
-                        <div class="status-buttons">
-                           <button type="button" class="status-toggle ${statusClass}" data-status="${statusText}">${statusText}</button>
-                        </div>`;
-                    studentListDiv.appendChild(item);
-                });
-            } catch (err) {
-                studentListDiv.innerHTML = `<p class="message error">Failed to load record.</p>`;
-            }
-        }
+        // In public/script.js, inside if (isEditPage)
+
+// In public/script.js, inside if (isEditPage)
+
+async function loadRecordForEdit() {
+    try {
+        const response = await fetch(`${API_URL}/attendance/${recordId}`);
+        const record = await response.json();
+        groupNameInput.value = record.groupName;
+        studentListDiv.innerHTML = '';
+        record.records.forEach((rec) => {
+            const item = document.createElement('div');
+            item.className = 'data-list-item student-attendance-item';
+            item.dataset.studentId = rec.studentId;
+            item.dataset.rollNumber = rec.rollNumber;
+            item.dataset.studentName = rec.studentName;
+            
+            const isPresent = rec.status === 'Present';
+            const statusClass = isPresent ? 'status-present' : 'status-absent';
+            const statusText = isPresent ? 'Present' : 'Absent';
+            
+            // --- The order of these two divs has been swapped back ---
+            item.innerHTML = `
+                <div class="info">
+                   <strong>${rec.rollNumber}</strong> - ${rec.studentName}
+                </div>
+                <div class="status-buttons">
+                   <button type="button" class="status-toggle ${statusClass}" data-status="${statusText}">${statusText}</button>
+                </div>
+            `;
+            studentListDiv.appendChild(item);
+        });
+    } catch (err) {
+         studentListDiv.innerHTML = `<p class="message error">Failed to load record.</p>`;
+    }
+}   
         
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -372,62 +387,91 @@ document.addEventListener('DOMContentLoaded', () => {
             button.setAttribute('aria-expanded', !isNowCollapsed);
         });
     
-        async function fetchAndDisplayRecordDetails(recordId) {
-            try {
-                const response = await fetch(`${API_URL}/attendance/${recordId}`);
-                if (!response.ok) throw new Error('Could not fetch record details');
-                const record = await response.json();
-                document.getElementById('detailGroupName').textContent = record.groupName;
-                const presentStudents = record.records.filter(r => r.status === 'Present');
-                const absentStudents = record.records.filter(r => r.status === 'Absent');
-                document.getElementById('presentCount').textContent = presentStudents.length;
-                document.getElementById('absentCount').textContent = absentStudents.length;
-                document.getElementById('presentList').innerHTML = presentStudents.map((r, i) => `<li>${i + 1}. ${r.rollNumber} - ${r.studentName}</li>`).join('');
-                document.getElementById('absentList').innerHTML = absentStudents.map((r, i) => `<li>${i + 1}. ${r.rollNumber} - ${r.studentName}</li>`).join('');
-                detailDiv.style.display = 'block';
-                document.querySelectorAll('.history-item').forEach(item => {
-                    item.classList.toggle('active', item.dataset.recordId === recordId);
-                });
-                // Set default toggle states
-                document.getElementById('presentListContainer').classList.remove('list-collapsed');
-                document.getElementById('togglePresentList').textContent = '[-]';
-                document.getElementById('togglePresentList').setAttribute('aria-expanded', 'true');
-                document.getElementById('absentListContainer').classList.add('list-collapsed');
-                document.getElementById('toggleAbsentList').textContent = '[+]';
-                document.getElementById('toggleAbsentList').setAttribute('aria-expanded', 'false');
-            } catch (error) {
-                alert(error.message);
-            }
-        }
+// In public/script.js, inside if (isHistoryPage)
+
+async function fetchAndDisplayRecordDetails(recordId) {
+    try {
+        const response = await fetch(`${API_URL}/attendance/${recordId}`);
+        if (!response.ok) throw new Error('Could not fetch record details');
+        const record = await response.json();
+
+        document.getElementById('detailGroupName').textContent = record.groupName;
+        const presentStudents = record.records.filter(r => r.status === 'Present');
+        const absentStudents = record.records.filter(r => r.status === 'Absent');
+
+        document.getElementById('presentCount').textContent = presentStudents.length;
+        document.getElementById('absentCount').textContent = absentStudents.length;
+
+        // UPDATED: Generate list items with the new single-line layout
+        document.getElementById('presentList').innerHTML = presentStudents.map((r, i) => `
+            <li>
+                <span class="s-no">${i + 1}.</span>
+                <div class="student-info">
+                    <strong>${r.rollNumber}</strong>
+                    <span>${r.studentName}</span>
+                </div>
+            </li>
+        `).join('');
+
+        document.getElementById('absentList').innerHTML = absentStudents.map((r, i) => `
+            <li>
+                <span class="s-no">${i + 1}.</span>
+                <div class="student-info">
+                    <strong>${r.rollNumber}</strong>
+                    <span>${r.studentName}</span>
+                </div>
+            </li>
+        `).join('');
         
-        async function fetchHistory() {
-            try {
-                const response = await fetch(`${API_URL}/attendance`);
-                const records = await response.json();
-                historyListDiv.innerHTML = '';
-                if (records.length === 0) {
-                    historyListDiv.innerHTML = '<p style="text-align:center; padding: 1rem;">No history found.</p>';
-                }
-                records.forEach((record, index) => {
-                    const item = document.createElement('div');
-                    item.className = 'history-item';
-                    item.dataset.recordId = record._id;
-                    item.innerHTML = `
-                        <div>
-                            <strong>${index + 1}. ${record.groupName}</strong>
-                            <br><small>${new Date(record.date).toLocaleString()}</small>
-                        </div>
-                        <div class="button-group">
-                            <button class="btn-edit" data-id="${record._id}">Edit</button>
-                            <button class="btn-delete" data-id="${record._id}">Delete</button>
-                        </div>`;
-                    historyListDiv.appendChild(item);
-                });
-                countSpan.textContent = `Total: ${records.length}`;
-            } catch (err) {
-                historyListDiv.innerHTML = `<p class="message error">Failed to load history.</p>`;
-            }
+        detailDiv.style.display = 'block';
+        document.querySelectorAll('.history-item').forEach(item => {
+            item.classList.toggle('active', item.dataset.recordId === recordId);
+        });
+        
+        // Reset toggle states (this logic is unchanged)
+        document.getElementById('presentListContainer').classList.remove('list-collapsed');
+        document.getElementById('togglePresentList').textContent = '[-]';
+        document.getElementById('togglePresentList').setAttribute('aria-expanded', 'true');
+        document.getElementById('absentListContainer').classList.add('list-collapsed');
+        document.getElementById('toggleAbsentList').textContent = '[+]';
+        document.getElementById('toggleAbsentList').setAttribute('aria-expanded', 'false');
+
+    } catch (error) {
+        alert(error.message);
+    }
+}
+// In public/script.js, inside if (isHistoryPage)
+
+async function fetchHistory() {
+    try {
+        const response = await fetch(`${API_URL}/attendance`);
+        const records = await response.json();
+        historyListDiv.innerHTML = '';
+        if (records.length === 0) {
+            historyListDiv.innerHTML = '<p style="text-align:center; padding: 1rem;">No history found.</p>';
         }
+        // UPDATED: Buttons now use symbols
+        records.forEach((record, index) => {
+            const item = document.createElement('div');
+            item.className = 'history-item';
+            item.dataset.recordId = record._id;
+            item.innerHTML = `
+                <div>
+                    <strong>${index + 1}. ${record.groupName}</strong>
+                    <br><small>${new Date(record.date).toLocaleString()}</small>
+                </div>
+                <div class="button-group">
+                    <button class="btn-edit" data-id="${record._id}" title="Edit Record">✎</button>
+                    <button class="btn-delete" data-id="${record._id}" title="Delete Record"></button>
+                </div>
+            `;
+            historyListDiv.appendChild(item);
+        });
+        countSpan.textContent = `Total: ${records.length}`;
+    } catch (err) {
+        historyListDiv.innerHTML = `<p class="message error">Failed to load history.</p>`;
+    }
+}
     
         // Event Listener (Delegated): Handles clicks on history items, edit, and delete
         historyListDiv.addEventListener('click', async (e) => {

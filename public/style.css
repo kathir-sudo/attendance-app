@@ -21,104 +21,6 @@ header {
     top: 0;
     z-index: 900;
 }
-/* --- 9. Toggle Button Styles --- */
-
-.status-toggle {
-    border: 1px solid #ddd;
-    padding: 0.5rem 1rem;
-    border-radius: 20px; /* Pill shape */
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 0.9rem;
-    min-width: 110px; /* Ensure buttons have same width */
-    text-align: center;
-    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-    user-select: none; /* Prevent text selection on rapid clicks */
-}
-
-/* State: Present (Green) */
-.status-toggle.status-present {
-    background-color: #e6f4ea;
-    border-color: #3d8b50;
-    color: #3d8b50;
-}
-.status-toggle.status-present::before {
-    content: '✔ ';
-    font-weight: bold;
-}
-
-/* State: Absent (Red) */
-.status-toggle.status-absent {
-    background-color: #fce8e6;
-    border-color: #c94a4a;
-    color: #c94a4a;
-}
-.status-toggle.status-absent::before {
-    content: '✖ ';
-    font-weight: bold;
-}
-
-/* Remove the old radio button styles if they interfere */
-.student-attendance-item .status-buttons {
-    display: block; /* No longer a flex container */
-}
-
-
-/* Override mobile grid layout for the new single button */
-@media (max-width: 600px) {
-    .student-attendance-item {
-        grid-template-columns: 1fr auto; /* Name | Toggle */
-        grid-template-areas: "info actions";
-        align-items: center;
-    }
-    .student-attendance-item .status-buttons {
-        grid-area: actions;
-        justify-self: end;
-    }
-}
-
-/* --- 10. History List Toggle Styles --- */
-
-.column-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 0.5rem;
-    margin-bottom: 1rem;
-}
-
-.column-header h3 {
-    margin: 0;
-    padding: 0;
-    border: none;
-}
-
-.toggle-vis {
-    background-color: #e9ecef;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    cursor: pointer;
-    font-family: monospace;
-    font-weight: bold;
-    font-size: 1rem;
-    width: 28px;
-    height: 28px;
-    line-height: 26px; /* Helps vertically center text */
-    text-align: center;
-    padding: 0;
-    flex-shrink: 0; /* Prevents button from shrinking */
-    transition: background-color 0.2s;
-}
-
-.toggle-vis:hover {
-    background-color: #dee2e6;
-}
-
-/* Class to hide the list container */
-.list-collapsed {
-    display: none;
-}
 
 header h1 {
     margin: 0;
@@ -190,7 +92,8 @@ textarea {
     box-sizing: border-box;
 }
 
-button {
+button,
+.btn-primary {
     background-color: #4a69bd;
     color: white;
     border: none;
@@ -201,15 +104,156 @@ button {
     transition: background-color 0.3s;
 }
 
-button:hover {
+button:hover,
+.btn-primary:hover {
     background-color: #3b5394;
 }
 
-.btn-primary {
-    background-color: #4a69bd;
+.btn-edit { background-color: #f0ad4e; }
+.btn-edit:hover { background-color: #ec971f; }
+
+.btn-delete { background-color: #d9534f; }
+.btn-delete:hover { background-color: #c9302c; }
+
+.button-group { display: flex; gap: 0.5rem; }
+
+.button-link {
+    display: inline-block;
+    background-color: #777;
+    color: white;
+    text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 5px;
+    margin-left: 1rem;
+    font-size: 1rem;
 }
-.btn-primary:hover {
-    background-color: #3b5394;
+.button-link:hover { background-color: #555; }
+
+/* --- 5. Generic Lists & Toolbar --- */
+.data-list { margin-top: 1rem; }
+
+.data-list-item {
+    display: grid;
+    /* CHANGED: New column order - Info (takes all space) | Actions (auto width) */
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.75rem;
+    border-bottom: 1px solid #eee;
+}
+
+.data-list-header {
+    font-weight: bold;
+    color: #555;
+    background-color: #f9f9f9;
+    border-bottom: 2px solid #ddd;
+    /* Apply the same grid to the header for alignment */
+    grid-template-columns: 1fr auto; 
+}
+.data-list-header .student-info { font-weight: bold; }
+
+.s-no {
+    display: none; /* Hide the S.No column for a cleaner look */
+}
+
+/* Make sure the buttons align to the right side of their column */
+.data-list-item .button-group {
+    justify-self: end;
+}
+
+.toolbar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+
+/* --- 6. Page-Specific Layouts & Styles --- */
+
+/* Manage Students & History Page two-column layout */
+.grid-main, .history-main { display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; align-items: start; }
+.history-main { grid-template-columns: 1.2fr 2fr; }
+
+/* Take/Edit Attendance Page Item Layout (Button on Left) */
+.student-attendance-item {
+    display: grid;
+    /* CHANGED: New column order - Info (takes remaining space) | Button (auto width) */
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0.75rem 0;
+    grid-template-areas: unset; /* Override any old mobile styles */
+}
+
+.student-attendance-item .s-no {
+    display: none; /* The S.No is not needed in this cleaner layout */
+}
+
+/* Ensure the button container aligns to the end (right) of its grid cell */
+.student-attendance-item .status-buttons {
+    justify-self: end;
+}
+
+/* History Page Styles */
+.history-item { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 1rem; padding: 0.75rem; border-bottom: 1px solid #eee; border-radius: 4px; transition: background-color 0.2s; }
+.history-item:not(:has(.btn-edit)):hover { background-color: #f4f4f9; cursor: pointer; }
+.history-item.active { background-color: #e0e7ff; font-weight: bold; }
+
+.record-detail-card { position: sticky; top: calc(4rem + 2rem); }
+.detail-columns { display: flex; flex-direction: column; gap: 1.5rem; }
+.column-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 0.5rem; margin-bottom: 1rem; }
+.column-header h3 { margin: 0; padding: 0; border: none; }
+.column ul { list-style-type: none; padding: 0; margin: 0; }
+.column li { padding: 0.5rem; border-radius: 4px; margin-bottom: 0.5rem; }
+.list-present li { background-color: #e6f4ea; color: #3d8b50; }
+.list-absent li { background-color: #fce8e6; color: #c94a4a; }
+
+/* --- 7. Component Styles (Badges, Messages, Modals, Toggles) --- */
+.count-badge { background-color: #e0e7ff; color: #4a69bd; padding: 0.25rem 0.75rem; border-radius: 12px; font-weight: bold; font-size: 0.9rem; white-space: nowrap; }
+.message { margin-top: 1rem; padding: 1rem; border-radius: 5px; display: block; }
+.message.success { background-color: #e0f8e0; color: #2c7b2c; }
+.message.error { background-color: #f8e0e0; color: #c0392b; }
+
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+.modal-content { background: white; padding: 2rem; border-radius: 8px; width: 90%; max-width: 500px; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+.modal-close { position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 2rem; color: #888; cursor: pointer; }
+.modal-content textarea { font-family: monospace; font-size: 0.9rem; margin-top: 0.5rem; }
+
+/* Status Toggle Button (Present/Absent) */
+.status-toggle { border: 1px solid #ddd; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 0.9rem; min-width: 110px; text-align: center; transition: all 0.2s ease; user-select: none; }
+.status-toggle.status-present { background-color: #e6f4ea; border-color: #3d8b50; color: #3d8b50; }
+.status-toggle.status-present::before { content: '✔ '; }
+.status-toggle.status-absent { background-color: #fce8e6; border-color: #c94a4a; color: #c94a4a; }
+.status-toggle.status-absent::before { content: '✖ '; }
+
+/* Visibility Toggle Button ([+]/[-]) */
+.toggle-vis { background-color: #e9ecef; border: 1px solid #ced4da; border-radius: 4px; cursor: pointer; font-family: monospace; font-weight: bold; font-size: 1rem; width: 28px; height: 28px; line-height: 26px; text-align: center; padding: 0; flex-shrink: 0; }
+.toggle-vis:hover { background-color: #dee2e6; }
+.list-collapsed { display: none; }
+
+/* In public/style.css */
+
+/* 1. Add this new style for the history detail list items */
+.column li {
+    display: flex; /* This enables the new layout */
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 0.5rem;
+}
+.column li .s-no {
+    color: #888;
+    flex-shrink: 0; /* Prevents the number from shrinking */
+}
+
+
+/* 2. REPLACE your existing .btn-edit and .btn-delete styles with these */
+.btn-edit, .btn-delete {
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    font-size: 1.2rem; /* Make the icon symbol bigger */
+    width: 40px;       /* Set a fixed width */
+    height: 40px;      /* Set a fixed height for a square look */
+    line-height: 40px; /* Helps vertically center the icon */
+    text-align: center;
+    padding: 0;        /* Remove padding to rely on width/height */
+    transition: background-color 0.2s;
 }
 
 .btn-edit {
@@ -226,265 +270,36 @@ button:hover {
     background-color: #c9302c;
 }
 
-.button-group {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.button-link {
-    display: inline-block;
-    background-color: #777;
-    color: white;
-    text-decoration: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 5px;
-    margin-left: 1rem;
-    font-size: 1rem;
-}
-.button-link:hover {
-    background-color: #555;
-}
-
-/* --- 5. Lists & Tables --- */
-.data-list {
-    margin-top: 1rem;
-}
-
-.data-list-item {
-    display: grid;
-    /* S.No | Roll No | Name | Actions */
-    grid-template-columns: 40px 120px 1fr auto;
-    gap: 1rem;
-    align-items: center;
-    padding: 0.75rem;
-    border-bottom: 1px solid #eee;
-}
-
-.data-list-header {
-    font-weight: bold;
-    color: #555;
-    background-color: #f9f9f9;
-    border-bottom: 2px solid #ddd;
-}
-
-.data-list-item:last-child {
-    border-bottom: none;
-}
-
-.s-no {
-    color: #888;
-    text-align: center;
-}
-
-/* Specific for Take Attendance page */
-.student-attendance-item .status-buttons {
-    display: flex;
-    gap: 1rem;
-}
-.student-attendance-item .status-buttons label {
-    margin-bottom: 0;
-    cursor: pointer;
-}
-
-
-/* --- 6. Components (Messages, Badges, Modals) --- */
-.message {
-    margin-top: 1rem;
-    padding: 1rem;
-    border-radius: 5px;
-    display: block;
-}
-.message.success {
-    background-color: #e0f8e0;
-    color: #2c7b2c;
-}
-.message.error {
-    background-color: #f8e0e0;
-    color: #c0392b;
-}
-
-.count-badge {
-    background-color: #e0e7ff;
-    color: #4a69bd;
-    padding: 0.25rem 0.75rem;
-    border-radius: 12px;
-    font-weight: bold;
-    font-size: 0.9rem;
-    white-space: nowrap;
-}
-
-.toolbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-}
-
-/* Modal Styles */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-.modal-content {
-    background: white;
-    padding: 2rem;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 500px;
-    position: relative;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
-.modal-close {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    background: none;
-    border: none;
-    font-size: 2rem;
-    color: #888;
-    cursor: pointer;
-}
-.modal-content textarea {
-    font-family: monospace;
-    font-size: 0.9rem;
-    margin-top: 0.5rem;
-}
-
-/* --- 7. Page-Specific Layouts --- */
-
-/* Manage Students & History Page two-column layout */
-.grid-main, .history-main {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 2rem;
-    align-items: start;
-}
-.history-main {
-    grid-template-columns: 1.2fr 2fr;
-}
-.record-detail-card {
-    position: sticky;
-    top: calc(4rem + 2rem); /* Header height + main padding */
-}
-
-/* History Item Styling */
-.history-item {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    gap: 1rem;
-    padding: 0.75rem;
-    border-bottom: 1px solid #eee;
-    border-radius: 4px;
-    transition: background-color 0.2s;
-}
-.history-item:not(:has(.btn-edit)):hover { /* Only make it seem clickable if not clicking a button */
-    background-color: #f4f4f9;
-    cursor: pointer;
-}
-.history-item.active {
-    background-color: #e0e7ff;
-    font-weight: bold;
-}
-.detail-columns {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-.column ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-}
-.column li {
-    padding: 0.5rem;
-    border-radius: 4px;
-    margin-bottom: 0.5rem;
-}
-.list-present li { background-color: #e6f4ea; color: #3d8b50; }
-.list-absent li { background-color: #fce8e6; color: #c94a4a; }
-
 /* --- 8. Mobile Responsive Styles --- */
 
 /* For Tablets and smaller */
 @media (max-width: 900px) {
-    .grid-main, .history-main {
-        grid-template-columns: 1fr;
-    }
-    .record-detail-card {
-        position: static; /* Unstick the details card */
-    }
+    .grid-main, .history-main { grid-template-columns: 1fr; }
+    .record-detail-card { position: static; } /* Unstick the details card */
 }
 
 /* For Phones */
 @media (max-width: 600px) {
-    header {
-        flex-direction: column;
-        gap: 0.5rem;
-        padding: 1rem;
-    }
-    nav {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 0.5rem;
-        margin-left: 0;
-    }
+    header { flex-direction: column; gap: 0.5rem; padding: 1rem; }
+    nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin-left: 0; }
     nav a { margin: 0; }
+    main { padding: 1rem; }
+    .toolbar { flex-direction: column; align-items: stretch; }
 
-    main {
-        padding: 1rem;
-    }
-
-    /* Stack list items vertically on mobile */
+    /* Manage Students List on Mobile */
     .data-list-header {
-        display: none; /* Hide header row on mobile */
+        display: none; /* Hide header row on mobile to save space */
     }
-
     .data-list-item {
-        grid-template-columns: 1fr auto;
-        grid-template-areas:
-            "info actions"
-            "info actions";
+        /* The 1fr auto layout already works well, no need for complex grid areas */
         padding-left: 0;
         padding-right: 0;
     }
-    .data-list-item .s-no { display: none; }
-    .data-list-item .student-info, .data-list-item .info { grid-area: info; }
-    .data-list-item .button-group { grid-area: actions; }
 
-    /* Special layout for attendance buttons */
-    .student-attendance-item {
-        grid-template-columns: 1fr;
-        grid-template-areas:
-            "info"
-            "buttons";
-        gap: 0.5rem;
-    }
-    .student-attendance-item .status-buttons {
-        grid-area: buttons;
-        justify-self: start;
-        padding: 0.5rem 0;
-    }
+    /* Take Attendance List on Mobile (already responsive due to new grid) */
+    .student-attendance-item { gap: 1rem; }
 
-    .toolbar {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .history-item {
-        grid-template-columns: 1fr;
-        gap: 0.5rem;
-    }
-    .history-item .button-group {
-        justify-self: end;
-    }
+    /* History Page on Mobile */
+    .history-item { grid-template-columns: 1fr; gap: 0.5rem; }
+    .history-item .button-group { justify-self: end; }
 }
