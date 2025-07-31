@@ -1,7 +1,7 @@
 // public/script.js
 document.addEventListener('DOMContentLoaded', () => {
     // --- 1. CONFIGURATION & GLOBAL SETUP ---
-    const API_URL = 'http://localhost:3000/api';
+    const API_URL = '/api';
 
     // Page Detection: Determines which page is currently active.
     const isManageStudentsPage = document.getElementById('addStudentForm');
