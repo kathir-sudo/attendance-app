@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Take Attendance</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Attendance Tracker</h1>
+        <nav>
+            <a href="index.html" class="active">Take Attendance</a>
+            <a href="history.html">View History</a>
+            <a href="add-student.html">Manage Students</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="card">
+            <div class="card-header">
+                <h2>Take Today's Attendance</h2>
+                <span id="takeAttendanceCount" class="count-badge">Total: 0</span>
+            </div>
+            <form id="attendanceForm">
+                <div class="form-group">
+                    <label for="groupName">Group / Session Name:</label>
+                    <input type="text" id="groupName" required>
+                </div>
+                <div id="studentList" class="data-list">
+                    <p>Loading students...</p>
+                </div>
+                <button type="submit">Save Attendance</button>
+            </form>
+            <p id="attendanceMessage" class="message"></p>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

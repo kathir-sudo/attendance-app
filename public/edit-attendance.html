@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Attendance</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Attendance Tracker</h1>
+        <nav>
+            <a href="index.html">Take Attendance</a>
+            <a href="history.html">View History</a>
+            <a href="add-student.html">Manage Students</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="card">
+            <h2>Edit Attendance Record</h2>
+            <form id="editAttendanceForm">
+                <div class="form-group">
+                    <label for="groupName">Group / Session Name:</label>
+                    <input type="text" id="groupName" required>
+                </div>
+                <div id="studentList" class="data-list">
+                    <p>Loading record...</p>
+                </div>
+                <button type="submit">Update Attendance</button>
+                 <a href="history.html" class="button-link">Cancel</a>
+            </form>
+            <p id="editMessage" class="message"></p>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

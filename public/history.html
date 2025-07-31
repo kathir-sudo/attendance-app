@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance History</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Attendance Tracker</h1>
+        <nav>
+            <a href="index.html">Take Attendance</a>
+            <a href="history.html" class="active">View History</a>
+            <a href="add-student.html">Manage Students</a>
+        </nav>
+    </header>
+
+    <main class="history-main">
+        <div class="card history-list-card">
+            <!-- CHANGED: Added a column-header for the main history list -->
+            <div class="column-header">
+                <div class="card-header" style="border: none; padding: 0;">
+                    <h2>Attendance History</h2>
+                    <span id="historyCount" class="count-badge">Total: 0</span>
+                </div>
+                <button type="button" class="toggle-vis" id="toggleHistoryList" aria-label="Toggle History List" aria-expanded="true">[-]</button>
+            </div>
+            <!-- CHANGED: Wrapped the list in a container for toggling -->
+            <div id="historyListContainer">
+                <div id="historyList" class="data-list">
+                    <p>Loading history...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card record-detail-card" id="recordDetail" style="display: none;">
+            <h2 id="detailGroupName">Record Details</h2>
+            <div class="detail-columns">
+                <div class="column">
+                    <div class="column-header">
+                        <h3>Present (<span id="presentCount">0</span>)</h3>
+                        <button type="button" class="toggle-vis" id="togglePresentList" aria-label="Toggle Present List" aria-expanded="true">[-]</button>
+                    </div>
+                    <div id="presentListContainer">
+                        <ul id="presentList" class="list-present"></ul>
+                    </div>
+                </div>
+                <div class="column">
+                     <div class="column-header">
+                        <h3>Absent (<span id="absentCount">0</span>)</h3>
+                        <button type="button" class="toggle-vis" id="toggleAbsentList" aria-label="Toggle Absent List" aria-expanded="false">[+]</button>
+                    </div>
+                    <div id="absentListContainer" class="list-collapsed">
+                        <ul id="absentList" class="list-absent"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
